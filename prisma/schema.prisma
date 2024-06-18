@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id       String    @id @default(cuid())
+  name     String?
+  email    String?   @unique
+  image    String?
+  password String?
+  role     UserRole  @default(USER)
+  Account  Account[]
+
+  @@map("users")
+}
+
+model Account {
+  id            String  @id @default(cuid())
+  userId        String  @map("user_id")
+  refresh_token String? @db.Text
+  access_token  String? @db.Text
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String? @db.Text
+  session_state String?
+  user          User    @relation(fields: [userId], references: [id])
+
+  @@map("account")
+}
+
+model PasswordResetToken {
+  id      String   @id @default(cuid())
+  email   String
+  token   String   @unique
+  expires DateTime
+
+  @@unique([email, token])
+  @@map("password_reset_token")
+}
+
+model Direktorat {
+  id         String    @id @default(cuid())
+  kode       String    @unique
+  nama       String
+  keterangan String?
+  ruangan    Ruangan[]
+
+  @@map("direktorat")
+}
+
+model Ruangan {
+  id           String     @id @default(cuid())
+  kode         String     @unique
+  nama         String
+  direktoratId String     @map("direktorat_id")
+  lokasi       String?
+  direktorat   Direktorat @relation(fields: [direktoratId], references: [id])
+
+  @@map("ruangan")
+}
+
+model KategoriAsset {
+  id         String       @id @default(cuid())
+  kode       String       @unique
+  nama       String
+  jenisAsset JenisAsset[]
+
+  @@map("kategori_asset")
+}
+
+model JenisAsset {
+  id              String        @id @default(cuid())
+  kode            String        @unique
+  nama            String
+  satuanAssetId   Int           @map("satuan_asset_id")
+  satuan          SatuanAsset   @relation(fields: [satuanAssetId], references: [id])
+  kategoriAsset   KategoriAsset @relation(fields: [kategoriAssetId], references: [id])
+  kategoriAssetId String        @map("kategori_asset_id")
+  keterangan      String?
+
+  @@map("jenis_asset")
+}
+
+model SatuanAsset {
+  id         Int          @id @default(autoincrement())
+  nama       String
+  JenisAsset JenisAsset[]
+
+  @@map("satuan_asset")
+}

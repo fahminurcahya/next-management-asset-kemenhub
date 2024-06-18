@@ -1,6 +1,12 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+
 import "./globals.css";
+import SheetProvider from "@/providers/sheet-provider";
+import { Toaster } from "@/components/ui/sonner";
+import QueryProviders from "@/providers/query-provider";
+import { SessionProvider } from "@hono/auth-js/react"
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,7 +22,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <QueryProviders>
+          <SheetProvider />
+          <Toaster />
+          <SessionProvider>
+            {children}
+          </SessionProvider>
+        </QueryProviders>
+      </body>
     </html>
   );
 }
