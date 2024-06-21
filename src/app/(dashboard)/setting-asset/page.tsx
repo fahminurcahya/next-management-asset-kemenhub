@@ -22,7 +22,7 @@ const SettingAssetPage = async () => {
         <div className="max-w-screen-2xl mx-auto w-full pb-10 -mt-24">
             <Card className="border-none drop-shadow-sm">
                 <CardContent className="pt-4">
-                    <Tabs defaultValue="week">
+                    <Tabs defaultValue="tab-kategori-asset">
                         <TabList />
                         <TabsContent value="tab-kategori-asset">
                             <TabContentKategoriAsset />
