@@ -1,8 +1,11 @@
-"use client"
+// "use client"
 import Image from "next/image";
 import LoginForm from "./login-form";
+import { auth } from "@/auth";
 
-const Page = () => {
+const Page = async () => {
+    const session = await auth();
+
     return (
         <div className="min-h-screen grid grid-cols-1 lg:grid-cols-2">
             <div className="h-full flex flex-col items-center justify-center px-4">
@@ -16,7 +19,13 @@ const Page = () => {
 
                 </div>
                 <div className=" mt-8">
-                    <LoginForm />
+                    {!session
+                        ?
+                        <LoginForm />
+                        : <p>
+                            {JSON.stringify(session)}
+                        </p>
+                    }
 
 
                     {/* <ClerkLoaded>

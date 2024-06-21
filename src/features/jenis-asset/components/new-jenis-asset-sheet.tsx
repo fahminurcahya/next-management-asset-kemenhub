@@ -40,7 +40,6 @@ export default function NewJenisAssetSheet() {
 
 
     const onSubmit = (values: FormValues) => {
-        console.log('dad')
         mutation.mutate(values, {
             onSuccess: () => {
                 onClose();

@@ -4,6 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 import { CreateDirektoratSchema, UpdateDirektoratSchema } from "@/schemas";
 import { getDirektoratById, getDirektoratBykode } from "@/data/direktorat";
 import { z } from "zod";
+import { auth } from "@/auth";
 
 
 const app = new Hono()
@@ -44,6 +45,12 @@ const app = new Hono()
         zValidator("json", CreateDirektoratSchema),
         async (c) => {
 
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const values = c.req.valid("json");
             const { kode } = values;
             const direktorat = await getDirektoratBykode(kode);
@@ -71,6 +78,13 @@ const app = new Hono()
             }),
         ),
         async (c) => {
+
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const values = c.req.valid("json");
 
             const data = await db.direktorat.deleteMany({
@@ -89,6 +103,13 @@ const app = new Hono()
         })),
         zValidator("json", UpdateDirektoratSchema),
         async (c) => {
+
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
             const values = c.req.valid("json");
 
@@ -112,6 +133,13 @@ const app = new Hono()
             id: z.string().optional(),
         })),
         async (c) => {
+
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
 
             if (!id) {

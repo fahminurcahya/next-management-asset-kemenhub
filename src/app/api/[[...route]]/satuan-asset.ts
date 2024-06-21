@@ -4,6 +4,7 @@ import { zValidator } from '@hono/zod-validator';
 import { CreateSatuanAssetSchema } from "@/schemas";
 import { z } from "zod";
 import { getSatuanAssetById } from "@/data/satuan-asset";
+import { auth } from "@/auth";
 
 
 const app = new Hono()
@@ -44,6 +45,12 @@ const app = new Hono()
         zValidator("json", CreateSatuanAssetSchema),
         async (c) => {
 
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const values = c.req.valid("json");
 
             const data = await db.satuanAsset.create({
@@ -64,6 +71,12 @@ const app = new Hono()
             }),
         ),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const values = c.req.valid("json");
 
             const data = await db.satuanAsset.deleteMany({
@@ -82,6 +95,12 @@ const app = new Hono()
         })),
         zValidator("json", CreateSatuanAssetSchema),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
             const values = c.req.valid("json");
 
@@ -109,6 +128,12 @@ const app = new Hono()
             id: z.string().optional(),
         })),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
 
             if (!id) {

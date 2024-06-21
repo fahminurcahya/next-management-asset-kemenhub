@@ -15,17 +15,23 @@ datasource db {
 
 enum UserRole {
   ADMIN
+  PIC
+  TEKNISI
   USER
 }
 
 model User {
-  id       String    @id @default(cuid())
-  name     String?
-  email    String?   @unique
-  image    String?
-  password String?
-  role     UserRole  @default(USER)
-  Account  Account[]
+  id        String    @id @default(cuid())
+  name      String?
+  email     String?   @unique
+  image     String?
+  password  String?
+  role      UserRole  @default(USER)
+  Account   Account[]
+  createdAt DateTime  @default(now()) @map("created_at")
+  createdBy String?   @map("created_by")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  updatedBy String?   @map("updated_by")
 
   @@map("users")
 }
@@ -61,17 +67,19 @@ model Direktorat {
   nama       String
   keterangan String?
   ruangan    Ruangan[]
+  Assets     Assets[]
 
   @@map("direktorat")
 }
 
 model Ruangan {
-  id           String     @id @default(cuid())
-  kode         String     @unique
+  id           String      @id @default(cuid())
+  kode         String      @unique
   nama         String
-  direktoratId String     @map("direktorat_id")
+  direktoratId String?     @map("direktorat_id")
   lokasi       String?
-  direktorat   Direktorat @relation(fields: [direktoratId], references: [id])
+  direktorat   Direktorat? @relation(fields: [direktoratId], references: [id], onDelete: SetNull)
+  Assets       Assets[]
 
   @@map("ruangan")
 }
@@ -81,19 +89,21 @@ model KategoriAsset {
   kode       String       @unique
   nama       String
   jenisAsset JenisAsset[]
+  Assets     Assets[]
 
   @@map("kategori_asset")
 }
 
 model JenisAsset {
-  id              String        @id @default(cuid())
-  kode            String        @unique
+  id              String         @id @default(cuid())
+  kode            String         @unique
   nama            String
-  satuanAssetId   Int           @map("satuan_asset_id")
-  satuan          SatuanAsset   @relation(fields: [satuanAssetId], references: [id])
-  kategoriAsset   KategoriAsset @relation(fields: [kategoriAssetId], references: [id])
-  kategoriAssetId String        @map("kategori_asset_id")
+  satuanAssetId   Int?           @map("satuan_asset_id")
+  satuan          SatuanAsset?   @relation(fields: [satuanAssetId], references: [id], onDelete: SetNull)
+  kategoriAsset   KategoriAsset? @relation(fields: [kategoriAssetId], references: [id], onDelete: SetNull)
+  kategoriAssetId String?        @map("kategori_asset_id")
   keterangan      String?
+  Assets          Assets[]
 
   @@map("jenis_asset")
 }
@@ -102,6 +112,62 @@ model SatuanAsset {
   id         Int          @id @default(autoincrement())
   nama       String
   JenisAsset JenisAsset[]
+  Assets     Assets[]
 
   @@map("satuan_asset")
+}
+
+model Assets {
+  id              Int            @id @default(autoincrement())
+  kodeAsset       String         @unique @map("kode_asset")
+  nama            String
+  merk            String
+  spek            String?
+  kategoriAssetId String?
+  jenisAssetId    String?
+  kategoriAsset   KategoriAsset? @relation(fields: [kategoriAssetId], references: [id], onDelete: SetNull)
+  jenisAsset      JenisAsset?    @relation(fields: [jenisAssetId], references: [id], onDelete: SetNull)
+  keterangan      String?
+  kondisi         String
+  ruanganId       String?        @map("ruangan_id")
+  ruangan         Ruangan?       @relation(fields: [ruanganId], references: [id], onDelete: SetNull)
+  direktoratId    String?        @map("direktorat_id")
+  direktorat      Direktorat?    @relation(fields: [direktoratId], references: [id], onDelete: SetNull)
+  pengadaanId     Int?           @map("pengadaan_id")
+  pengadaan       Pengadaan?     @relation(fields: [pengadaanId], references: [id], onDelete: SetNull)
+  isBorrowed      Boolean        @default(false) @map("is_borrowed")
+  isAvailable     Boolean        @default(true) @map("is_available")
+  SatuanAsset     SatuanAsset?   @relation(fields: [satuanAssetId], references: [id])
+  satuanAssetId   Int?
+
+  @@map("asset")
+}
+
+model Pengadaan {
+  id               Int             @id @default(autoincrement())
+  noPengadaan      String          @unique @map("no_pengadaan")
+  tglPengadaan     DateTime        @map("tgl_pengadaan")
+  tujuan           String?
+  noPo             String?         @map("no_po")
+  jenisPengadaanId Int?
+  jenisPengadaan   JenisPengadaan? @relation(fields: [jenisPengadaanId], references: [id], onDelete: SetNull)
+  invoice          String?
+  photo            String?
+  qty              Int
+  Assets           Assets[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  createdBy String?  @map("created_by")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedBy String?  @map("updated_by")
+
+  @@map("pengadaan")
+}
+
+model JenisPengadaan {
+  id        Int         @id @default(autoincrement())
+  nama      String
+  Pengadaan Pengadaan[]
+
+  @@map("jenis_pengadaan")
 }

@@ -13,21 +13,30 @@ type Props = {
     options?: { label: string, value: string }[]
     value?: string | number | null | undefined;
     disabled?: boolean;
+    isLoading?: boolean;
     placeholder?: string;
+    isDocumentBody?: boolean
+    handleChange?: (value?: string) => void
 }
 
 export const Select = ({
     value,
     onChange,
     disabled,
+    isLoading = false,
     onCreate,
+    handleChange,
     options = [],
+    isDocumentBody,
     placeholder
 }: Props) => {
     const onSelect = (
         option: SingleValue<{ label: string, value: string }>
     ) => {
         onChange(option?.value);
+        if (handleChange) {
+            handleChange(option?.value)
+        }
     }
 
     const formattedValue = useMemo(() => {
@@ -61,17 +70,19 @@ export const Select = ({
     return (
         <SingleSelect
             placeholder={placeholder}
-            className="text-sm h-10"
+            className="text-sm h-10 "
+            menuPortalTarget={isDocumentBody ? document.body : null}
             styles={{
                 control: (base) => ({
                     ...base,
                     borderColor: "#e2e8f0",
                     ":hover": {
                         borderColor: "e2e8f0"
-                    }
+                    },
                 })
             }}
             value={formattedValue}
+            isLoading={isLoading}
             onChange={onSelect}
             options={options}
             isDisabled={disabled}

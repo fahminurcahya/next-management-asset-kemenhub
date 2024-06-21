@@ -5,7 +5,6 @@ import "./globals.css";
 import SheetProvider from "@/providers/sheet-provider";
 import { Toaster } from "@/components/ui/sonner";
 import QueryProviders from "@/providers/query-provider";
-import { SessionProvider } from "@hono/auth-js/react"
 
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,9 +25,7 @@ export default function RootLayout({
         <QueryProviders>
           <SheetProvider />
           <Toaster />
-          <SessionProvider>
-            {children}
-          </SessionProvider>
+          {children}
         </QueryProviders>
       </body>
     </html>

@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { LoginSchema } from "@/schemas";
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import FormError from "@/components/form-error";
+import { login } from "@/action/login";
 
 
 
@@ -32,14 +33,13 @@ export default function LoginForm() {
     })
 
     const onSubmit = (values: z.infer<typeof LoginSchema>) => {
-        console.log(values);
-        // startTransition(() => {
-        //     login(values)
-        //         .then((data) => {
-        //             setError(data?.error)
-        //             setSuccess(data?.success)
-        //         })
-        // })
+        startTransition(() => {
+            login(values)
+                .then((data) => {
+                    console.log(data)
+                });
+
+        })
     }
 
     return (

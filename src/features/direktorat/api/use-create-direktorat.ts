@@ -15,7 +15,6 @@ export const useCreateDirektorat = () => {
         RequestType
     >({
         mutationFn: async (json) => {
-            console.log(json)
             const response = await client.api.direktorat.$post({ json });
             if (response.ok) {
                 return await response.json();

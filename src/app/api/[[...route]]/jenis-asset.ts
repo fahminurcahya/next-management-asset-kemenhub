@@ -3,7 +3,8 @@ import { Hono } from "hono"
 import { zValidator } from '@hono/zod-validator';
 import { CreateJenisAssetSchema, UpdateJenisAssetSchema } from "@/schemas";
 import { z } from "zod";
-import { getJenisAssetById, getJenisAssetBykode } from "@/data/jenis-asset";
+import { getJenisAssetById, getJenisAssetByKetegoriId, getJenisAssetBykode } from "@/data/jenis-asset";
+import { auth } from "@/auth";
 
 
 const app = new Hono()
@@ -27,6 +28,7 @@ const app = new Hono()
             id: z.string().optional(),
         })),
         async (c) => {
+
             const { id } = c.req.valid("param");
 
             if (!id) {
@@ -44,10 +46,36 @@ const app = new Hono()
         }
 
     )
+
+    .get(
+        "/:id/kategori",
+        zValidator("param", z.object({
+            id: z.string().optional(),
+        })),
+        async (c) => {
+
+            const { id } = c.req.valid("param");
+
+            if (!id) {
+                return c.json({ error: "Missing id" }, 400);
+            }
+
+            const data = await getJenisAssetByKetegoriId(id);
+
+            return c.json({ data })
+        }
+
+    )
     .post(
         "/",
         zValidator("json", CreateJenisAssetSchema),
         async (c) => {
+
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
 
             const body = c.req.valid("json");
             const { kode } = body;
@@ -80,6 +108,12 @@ const app = new Hono()
             }),
         ),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const values = c.req.valid("json");
 
             const data = await db.jenisAsset.deleteMany({
@@ -98,6 +132,12 @@ const app = new Hono()
         })),
         zValidator("json", UpdateJenisAssetSchema),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
             const body = c.req.valid("json");
             const values = {
@@ -125,6 +165,12 @@ const app = new Hono()
             id: z.string().optional(),
         })),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
 
             if (!id) {

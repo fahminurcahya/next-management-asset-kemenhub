@@ -10,6 +10,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAllRuangan } from "@/features/ruangan/api/use-get-all-ruangan";
 import { useNewRuangan } from "@/features/ruangan/hooks/use-new-ruangan";
 import { useBulkDeleteRuangan } from "@/features/ruangan/api/use-bulk-delete-ruangan";
+import { useSession } from "next-auth/react";
+import Forbidden from "@/components/forbidden";
 
 
 const RuanganPage = () => {
@@ -22,6 +24,14 @@ const RuanganPage = () => {
 
     const isDisabled =
         ruanganQuery.isLoading || deleteRuangan.isPending;
+
+    const { data: session } = useSession();
+
+    if (session?.user.role != "ADMIN") {
+        return (
+            <Forbidden />
+        )
+    }
 
     if (ruanganQuery.isLoading) {
         return (

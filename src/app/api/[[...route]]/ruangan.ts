@@ -3,13 +3,15 @@ import { Hono } from "hono"
 import { zValidator } from '@hono/zod-validator';
 import { CreateRuanganSchema, UpdateRuanganSchema } from "@/schemas";
 import { z } from "zod";
-import { getRuanganById, getRuanganByKode } from "@/data/ruangan";
+import { getRuanganByDirektoratId, getRuanganById, getRuanganByKode } from "@/data/ruangan";
+import { auth } from "@/auth";
 
 
 const app = new Hono()
     .get(
         "/",
         async (c) => {
+
             const data = await db.ruangan.findMany({
                 include: {
                     direktorat: true,
@@ -42,10 +44,35 @@ const app = new Hono()
         }
 
     )
+    .get(
+        "/:id/direktorat",
+        zValidator("param", z.object({
+            id: z.string().optional(),
+        })),
+        async (c) => {
+
+            const { id } = c.req.valid("param");
+
+            if (!id) {
+                return c.json({ error: "Missing id" }, 400);
+            }
+
+            const data = await getRuanganByDirektoratId(id);
+
+            return c.json({ data })
+        }
+
+    )
     .post(
         "/",
         zValidator("json", CreateRuanganSchema),
         async (c) => {
+
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
 
             const values = c.req.valid("json");
             const { kode } = values;
@@ -74,6 +101,12 @@ const app = new Hono()
             }),
         ),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const values = c.req.valid("json");
 
             const data = await db.ruangan.deleteMany({
@@ -92,6 +125,12 @@ const app = new Hono()
         })),
         zValidator("json", UpdateRuanganSchema),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
             const values = c.req.valid("json");
 
@@ -115,6 +154,12 @@ const app = new Hono()
             id: z.string().optional(),
         })),
         async (c) => {
+            const session = await auth();
+
+            if (!session) {
+                return c.json({ error: "Unauthorized" }, 401);
+            }
+
             const { id } = c.req.valid("param");
 
             if (!id) {

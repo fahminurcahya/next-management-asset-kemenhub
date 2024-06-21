@@ -18,8 +18,8 @@ const routes = [
         label: "Pengadaan",
     },
     {
-        href: "/mutasi",
-        label: "Mutasi",
+        href: "/asset",
+        label: "Asset",
     },
     {
         href: "/direktorat",

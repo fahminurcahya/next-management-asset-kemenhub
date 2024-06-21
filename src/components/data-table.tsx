@@ -10,6 +10,7 @@ import {
     getFilteredRowModel,
     getSortedRowModel,
     useReactTable,
+    getPaginationRowModel,
 } from "@tanstack/react-table"
 
 import {
@@ -24,14 +25,14 @@ import { useConfirm } from "@/hooks/use-confirm"
 import { useState } from "react"
 import { Input } from "./ui/input"
 import { Button } from "./ui/button"
-import { Trash } from "lucide-react"
+import { DoorOpen, Printer, Trash } from "lucide-react"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
     data: TData[]
     filterKey: string
     onDelete: (rows: Row<TData>[]) => void;
-    disabled: boolean
+    disabled: boolean,
 }
 
 export function DataTable<TData, TValue>({
@@ -63,6 +64,7 @@ export function DataTable<TData, TValue>({
         onColumnFiltersChange: setColumnFilters,
         getFilteredRowModel: getFilteredRowModel(),
         onRowSelectionChange: setRowSelection,
+        getPaginationRowModel: getPaginationRowModel(),
         state: {
             sorting,
             columnFilters,
@@ -83,22 +85,41 @@ export function DataTable<TData, TValue>({
                     className="max-w-sm"
                 />
                 {table.getFilteredSelectedRowModel().rows.length > 0 && (
-                    <Button
-                        disabled={disabled}
-                        size="sm"
-                        variant="outline"
-                        className="ml-auto font-normal text-xs"
-                        onClick={async () => {
-                            const ok = await confirm();
-                            if (ok) {
-                                onDelete(table.getFilteredSelectedRowModel().rows)
-                                table.resetRowSelection();
-                            }
-                        }}
-                    >
-                        <Trash className="size-4 mr-2" />
-                        Delete ({table.getFilteredSelectedRowModel().rows.length})
-                    </Button>
+                    <>
+                        <Button
+                            disabled={disabled}
+                            size="sm"
+                            variant="outline"
+                            className="ml-auto font-normal text-xs"
+                            onClick={async () => {
+                                const ok = await confirm();
+                                if (ok) {
+                                    onDelete(table.getFilteredSelectedRowModel().rows)
+                                    table.resetRowSelection();
+                                }
+                            }}
+                        >
+                            <DoorOpen className="size-4 mr-2" />
+                            Tempatkan Asset ({table.getFilteredSelectedRowModel().rows.length})
+                        </Button>
+                        <Button
+                            disabled={disabled}
+                            size="sm"
+                            variant="outline"
+                            className="ml-2 font-normal text-xs"
+                            onClick={async () => {
+                                const ok = await confirm();
+                                if (ok) {
+                                    onDelete(table.getFilteredSelectedRowModel().rows)
+                                    table.resetRowSelection();
+                                }
+                            }}
+                        >
+                            <Printer className="size-4 mr-2" />
+                            Print Label ({table.getFilteredSelectedRowModel().rows.length})
+                        </Button>
+                    </>
+
                 )}
             </div>
             <div className="rounded-md border">

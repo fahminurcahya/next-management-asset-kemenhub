@@ -10,6 +10,8 @@ import { useNewDirektorat } from "@/features/direktorat/hooks/use-new-direktorat
 import { useBulkDeleteDirektorat } from "@/features/direktorat/api/use-bulk-delete-direktorat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetAllDirektorat } from "@/features/direktorat/api/use-get-all-direktorat";
+import { useSession } from "next-auth/react";
+import Forbidden from "@/components/forbidden";
 
 
 const DirektoratPage = () => {
@@ -22,6 +24,16 @@ const DirektoratPage = () => {
 
     const isDisabled =
         direktoratQuery.isLoading || deleteDirektorat.isPending;
+
+    const { data: session } = useSession();
+
+    if (session?.user.role != "ADMIN") {
+        return (
+            <Forbidden />
+        )
+    }
+
+
 
     if (direktoratQuery.isLoading) {
         return (
@@ -39,6 +51,7 @@ const DirektoratPage = () => {
             </div>
         )
     }
+
 
 
     return (

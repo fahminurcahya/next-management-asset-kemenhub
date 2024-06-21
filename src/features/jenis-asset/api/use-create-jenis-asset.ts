@@ -15,7 +15,6 @@ export const useCreateJenisAsset = () => {
         RequestType
     >({
         mutationFn: async (json) => {
-            console.log(json)
             const response = await client.api["jenis-asset"]["$post"]({ json });
             if (response.ok) {
                 return await response.json();

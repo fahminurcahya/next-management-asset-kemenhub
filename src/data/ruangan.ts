@@ -26,3 +26,16 @@ export const getRuanganById = async (id: string) => {
         return null;
     }
 }
+
+export const getRuanganByDirektoratId = async (id: string) => {
+    try {
+        const ruangan = await db.ruangan.findMany({
+            where: {
+                direktoratId: id
+            }
+        })
+        return ruangan;
+    } catch {
+        return null;
+    }
+}

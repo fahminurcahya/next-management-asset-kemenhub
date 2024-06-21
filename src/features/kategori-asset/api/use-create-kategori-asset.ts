@@ -15,7 +15,7 @@ export const useCreateKategoriAsset = () => {
         RequestType
     >({
         mutationFn: async (json) => {
-            console.log(json)
+
             const response = await client.api["kategori-asset"]["$post"]({ json });
             if (response.ok) {
                 return await response.json();

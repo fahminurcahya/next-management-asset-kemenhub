@@ -1,4 +1,5 @@
 import Header from "@/components/header"
+import { SessionProvider } from "next-auth/react";
 
 type Props = {
     children: React.ReactNode
@@ -7,10 +8,12 @@ type Props = {
 const Layout = ({ children }: Props) => {
     return (
         <>
-            <Header />
-            <main className='px-3 lg:px-14'>
-                {children}
-            </main>
+            <SessionProvider>
+                <Header />
+                <main className='px-3 lg:px-14'>
+                    {children}
+                </main>
+            </SessionProvider>
         </>
     );
 }

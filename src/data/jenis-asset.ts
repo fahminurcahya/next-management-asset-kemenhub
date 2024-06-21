@@ -26,3 +26,16 @@ export const getJenisAssetById = async (id: string) => {
         return null;
     }
 }
+
+export const getJenisAssetByKetegoriId = async (id: string) => {
+    try {
+        const jenisAsset = await db.jenisAsset.findMany({
+            where: {
+                kategoriAssetId: id
+            }
+        })
+        return jenisAsset;
+    } catch {
+        return null;
+    }
+}

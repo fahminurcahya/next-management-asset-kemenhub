@@ -6,6 +6,7 @@ import EditJenisAssetSheet from "@/features/jenis-asset/components/edit-jenis-as
 import NewJenisAssetSheet from "@/features/jenis-asset/components/new-jenis-asset-sheet";
 import EditKategoriAssetSheet from "@/features/kategori-asset/components/edit-kategori-asset-sheet";
 import NewKategoriAssetSheet from "@/features/kategori-asset/components/new-kategori-asset-sheet";
+import NewAssetSheet from "@/features/pengadaan/components/new-asset-sheet";
 import EditRuanganSheet from "@/features/ruangan/components/edit-ruangan-sheet";
 import NewRuanganSheet from "@/features/ruangan/components/new-ruangan-sheet";
 import EditSatuanAssetSheet from "@/features/satuan-asset/components/edit-direktorat-sheet";
@@ -27,6 +28,7 @@ export default function SheetProvider() {
             <EditJenisAssetSheet />
             <NewSatuanAssetSheet />
             <EditSatuanAssetSheet />
+            <NewAssetSheet />
         </>
     )
 }
