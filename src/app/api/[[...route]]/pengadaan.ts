@@ -6,6 +6,7 @@ import { z } from "zod";
 import { auth } from "@/auth";
 import { generateNextCode, getJenisPengadaan, getPengadaanById, getSatuanAsset } from "@/data/pengadaan";
 import { randomUUID } from "crypto";
+import { generateRandomKey, getCurrentDateFormatted } from "@/lib/utils";
 
 type CreateAssetSchema = {
     kodeAsset: string,
@@ -65,7 +66,7 @@ const app = new Hono()
             const newAssetsData: CreateAssetSchema[] = assetsData.flatMap((asset, index): CreateAssetSchema[] => {
 
                 const assetsArray: CreateAssetSchema[] = Array.from({ length: asset.qty }, (__, i) => ({
-                    kodeAsset: randomUUID(),
+                    kodeAsset: getCurrentDateFormatted() + generateRandomKey(5),
                     nama: asset.nama,
                     merk: asset.merk,
                     kategoriAssetId: asset.kategoriAssetId,
@@ -73,7 +74,7 @@ const app = new Hono()
                     spek: asset.spek,
                     kondisi: asset.kondisi,
                     keterangan: asset.keterangan,
-                    ruanganId: asset.ruanganId,
+                    ruanganId: asset.ruanganId ? asset.ruanganId : null,
                     direktoratId: values.direktoratId ? values.direktoratId : null,
                     isAvailable: values.direktoratId ? false : true
                 }));
